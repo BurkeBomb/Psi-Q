@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personality Test Kit</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #080c14;
+      --surface:   #0e1420;
+      --border:    #1c2440;
+      --accent:    #4f8ef7;
+      --accent2:   #7dd4c0;
+      --text:      #e8eaf6;
+      --muted:     #7a84a8;
+      --tag-bg:    #131b30;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #0d1527 0%, var(--bg) 100%);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .hero-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent2);
+    }
+    .hero p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+    .stack-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      color: var(--accent2);
+      letter-spacing: 0.05em;
+    }
+    .stack-badge span { color: var(--muted); }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .filter-btn {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.04em;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .filter-btn[data-all].active {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: #080c14;
+    }
+
+    /* ── SECTION ── */
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+      padding-left: 0.25rem;
+    }
+
+    /* ── CARDS ── */
+    .cards { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2.5rem; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: border-color 0.18s, transform 0.18s;
+      animation: fadeUp 0.4s ease both;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .card.hidden { display: none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--border);
+      line-height: 1;
+      min-width: 1.6rem;
+      padding-top: 0.1rem;
+    }
+    .card-body { flex: 1; min-width: 0; }
+    .card-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .card-title:hover { color: var(--accent2); }
+    .tag {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .tag.bigfive  { border-color: #3a6fd8; color: #7fb0ff; }
+    .tag.mbti     { border-color: #5a3ab0; color: #b99aff; }
+    .tag.enneagram{ border-color: #3a8060; color: #7dd4a0; }
+    .tag.disc     { border-color: #7a6020; color: #ffd080; }
+    .tag.archetype{ border-color: #803a3a; color: #ff9a9a; }
+    .tag.core     { background: #1a2440; color: var(--accent); border-color: var(--accent); }
+
+    .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.6rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 0.4rem;
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      letter-spacing: 0.04em;
+    }
+    .open-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .open-btn svg { width: 11px; height: 11px; }
+
+    /* ── ORDER SECTION ── */
+    .order-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .order-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      margin-bottom: 0.4rem;
+      color: #fff;
+    }
+    .order-section .sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.6;
+    }
+    .steps { display: flex; flex-direction: column; gap: 0.75rem; }
+    .step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .step-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 0.9rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .step-text { flex: 1; padding-top: 0.15rem; }
+    .step-text strong { color: var(--text); font-size: 0.85rem; display: block; margin-bottom: 0.1rem; }
+    .step-text span { font-size: 0.78rem; color: var(--muted); }
+
+    .rec-box {
+      margin-top: 1.25rem;
+      padding: 0.85rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px dashed #2a3a5a;
+      background: #0a1020;
+      font-size: 0.8rem;
+      color: var(--accent2);
+      line-height: 1.6;
+    }
+    .rec-box strong { color: #fff; }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #3a4468;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .hero { padding: 3rem 1.25rem 2.5rem; }
+      .card-num { display: none; }
+      .card { gap: 0.75rem; padding: 0.9rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Self-knowledge toolkit</div>
+  <h1>Free Personality &amp;<br><em>Psychology Tests</em></h1>
+  <p>A curated set of free tests — traits, type, motivations, and symbolic identity. Open any test directly in a new tab.</p>
+  <div class="stack-badge">
+    <span>Best stack →</span>
+    Big Five · 16Personalities · Enneagram · Archetype
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-all>All</button>
+    <button class="filter-btn" data-filter="bigfive">Big Five</button>
+    <button class="filter-btn" data-filter="mbti">MBTI-style</button>
+    <button class="filter-btn" data-filter="enneagram">Enneagram</button>
+    <button class="filter-btn" data-filter="disc">DISC</button>
+    <button class="filter-btn" data-filter="archetype">Archetype</button>
+    <button class="filter-btn" data-filter="core">★ Core only</button>
+  </div>
+
+  <!-- CARDS -->
+  <div class="section-label">Tests</div>
+  <div class="cards" id="cardList">
+
+    <div class="card" data-cat="bigfive core">
+      <div class="card-num">01</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">OpenPsychometrics Big Five</span>
+          <span class="tag bigfive">Big Five</span>
+          <span class="tag core">★ Core</span>
+        </div>
+        <div class="card-desc">Strong free Big Five trait breakdown with detailed facet scores. The most scientifically grounded starting point.</div>
+        <a class="open-btn" href="https://openpsychometrics.org/tests/IPIP-BFFM/" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="bigfive core">
+      <div class="card-num">02</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">BigFive-Test.com</span>
+          <span class="tag bigfive">Big Five</span>
+          <span class="tag core">★ Core</span>
+        </div>
+        <div class="card-desc">Clean Big Five report. Good for a second pass to compare against the OpenPsychometrics result.</div>
+        <a class="open-btn" href="https://bigfive-test.com/en" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="mbti core">
+      <div class="card-num">03</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">16Personalities</span>
+          <span class="tag mbti">MBTI-style</span>
+          <span class="tag core">★ Core</span>
+        </div>
+        <div class="card-desc">The most widely-used free MBTI-style test. Readable result report, useful for self-recognition and comparison.</div>
+        <a class="open-btn" href="https://www.16personalities.com/free-personality-test" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="enneagram core">
+      <div class="card-num">04</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">Truity Enneagram</span>
+          <span class="tag enneagram">Enneagram</span>
+          <span class="tag core">★ Core</span>
+        </div>
+        <div class="card-desc">Good free Enneagram overview with ranked types. Surfaces motivation and fear patterns that Big Five and MBTI miss.</div>
+        <a class="open-btn" href="https://www.truity.com/test/enneagram-personality-test" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="mbti">
+      <div class="card-num">05</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">Truity TypeFinder</span>
+          <span class="tag mbti">MBTI-style</span>
+        </div>
+        <div class="card-desc">Alternative 16-type test. Worth doing if you want a second opinion on your MBTI-style result.</div>
+        <a class="open-btn" href="https://www.truity.com/test/type-finder-personality-test-new" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="bigfive">
+      <div class="card-num">06</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">123test Big Five</span>
+          <span class="tag bigfive">Big Five</span>
+        </div>
+        <div class="card-desc">Quick free trait profile. Good if you want a faster Big Five snapshot without the full item count.</div>
+        <a class="open-btn" href="https://www.123test.com/personality-test/" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="bigfive">
+      <div class="card-num">07</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">Out of Service Big Five</span>
+          <span class="tag bigfive">Big Five</span>
+        </div>
+        <div class="card-desc">Simple, minimal Big Five snapshot. No frills, fast result.</div>
+        <a class="open-btn" href="https://www.outofservice.com/bigfive/" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="mbti">
+      <div class="card-num">08</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">OpenPsychometrics Jung Type Test</span>
+          <span class="tag mbti">MBTI-style</span>
+        </div>
+        <div class="card-desc">Jung/MBTI-style type test from the same open research platform as the Big Five above.</div>
+        <a class="open-btn" href="https://openpsychometrics.org/tests/OJTS/" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="disc">
+      <div class="card-num">09</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">123test DISC</span>
+          <span class="tag disc">DISC</span>
+        </div>
+        <div class="card-desc">Maps work-style and communication tendencies. More useful in a professional or relationship context than the others.</div>
+        <a class="open-btn" href="https://www.123test.com/disc-personality-test/" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="archetype">
+      <div class="card-num">10</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">Psychologist World Jungian Archetype</span>
+          <span class="tag archetype">Archetype</span>
+        </div>
+        <div class="card-desc">Straightforward Jungian archetype result. Good first archetype test — clear and quick.</div>
+        <a class="open-btn" href="https://www.psychologistworld.com/tests/jung-archetype-quiz" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="card" data-cat="archetype">
+      <div class="card-num">11</div>
+      <div class="card-body">
+        <div class="card-title-row">
+          <span class="card-title">LonerWolf Psychological Archetype</span>
+          <span class="tag archetype">Archetype</span>
+        </div>
+        <div class="card-desc">More reflective and introspective archetype feedback. Good second opinion on the symbolic identity layer.</div>
+        <a class="open-btn" href="https://lonerwolf.com/psychological-archetype-test/" target="_blank" rel="noopener">
+          Open test
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /cards -->
+
+  <!-- SUGGESTED ORDER -->
+  <div class="order-section">
+    <h2>Suggested order</h2>
+    <div class="sub">Move through layers — traits → type → motivations → symbolic identity.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-text">
+          <strong>Big Five — trait foundation</strong>
+          <span>OpenPsychometrics or BigFive-Test. Map your core trait profile first.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-text">
+          <strong>MBTI-style — type pattern</strong>
+          <span>16Personalities or Truity TypeFinder. Get a recognisable type snapshot.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-text">
+          <strong>Enneagram — motivations &amp; defenses</strong>
+          <span>Truity Enneagram. Reveals what drives you and what you protect against.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-text">
+          <strong>Archetype — symbolic identity layer</strong>
+          <span>Pick one archetype test. The most subjective layer — but often the most striking.</span>
+        </div>
+      </div>
+    </div>
+    <div class="rec-box">
+      <strong>Best compact stack:</strong> OpenPsychometrics Big Five · 16Personalities · Truity Enneagram · one Archetype test
+    </div>
+  </div>
+
+  <div class="footer">All tests are free and open in a new tab. No data is collected by this page.</div>
+
+</div><!-- /container -->
+
+<script>
+  (function () {
+    const allBtn = document.querySelector('[data-all]');
+    const filterBtns = document.querySelectorAll('[data-filter]');
+    const cards = document.querySelectorAll('.card');
+    let active = null;
+
+    function applyFilter(filter) {
+      cards.forEach(card => {
+        const cats = (card.dataset.cat || '').split(' ');
+        if (!filter) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.toggle('hidden', !cats.includes(filter));
+        }
+      });
+    }
+
+    allBtn.addEventListener('click', () => {
+      active = null;
+      allBtn.classList.add('active');
+      filterBtns.forEach(b => b.classList.remove('active'));
+      applyFilter(null);
+    });
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = btn.dataset.filter;
+        if (active === f) {
+          // toggle off
+          active = null;
+          btn.classList.remove('active');
+          allBtn.classList.add('active');
+          applyFilter(null);
+        } else {
+          active = f;
+          filterBtns.forEach(b => b.classList.remove('active'));
+          allBtn.classList.remove('active');
+          btn.classList.add('active');
+          applyFilter(f);
+        }
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
