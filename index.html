@@ -17,6 +17,8 @@
       --text:      #e8eaf6;
       --muted:     #7a84a8;
       --tag-bg:    #131b30;
+      --done-bg:   #0a1a14;
+      --done-border: #1a3a2a;
     }
 
     html { scroll-behavior: smooth; }
@@ -26,11 +28,9 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 0;
       overflow-x: hidden;
     }
 
-    /* ── NOISE OVERLAY ── */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -70,17 +70,43 @@
       color: #fff;
       margin-bottom: 1rem;
     }
-    .hero h1 em {
-      font-style: italic;
-      color: var(--accent2);
-    }
+    .hero h1 em { font-style: italic; color: var(--accent2); }
     .hero p {
       font-size: 0.85rem;
       color: var(--muted);
       max-width: 480px;
-      margin: 0 auto 2rem;
+      margin: 0 auto 1.5rem;
       line-height: 1.7;
     }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap {
+      max-width: 320px;
+      margin: 0 auto 1.5rem;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.06em;
+    }
+    .progress-label span { color: var(--accent2); }
+    .progress-track {
+      height: 4px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
     .stack-badge {
       display: inline-flex;
       align-items: center;
@@ -94,6 +120,83 @@
       letter-spacing: 0.05em;
     }
     .stack-badge span { color: var(--muted); }
+
+    /* ── QUICK START BANNER ── */
+    .quickstart {
+      background: linear-gradient(135deg, #0d1a30 0%, #0a1420 100%);
+      border: 1px solid #2a3a60;
+      border-radius: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .quickstart::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .quickstart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .quickstart h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      color: #fff;
+    }
+    .qs-badge {
+      font-size: 0.62rem;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .quickstart p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    .qs-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .qs-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      background: #080c14;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: border-color 0.15s;
+      cursor: pointer;
+    }
+    .qs-step:hover { border-color: var(--accent); }
+    .qs-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--accent);
+      min-width: 1.2rem;
+    }
+    .qs-info { flex: 1; }
+    .qs-info strong { display: block; font-size: 0.8rem; color: var(--text); margin-bottom: 0.1rem; }
+    .qs-info small { font-size: 0.7rem; color: var(--muted); }
+    .qs-arrow { color: var(--muted); font-size: 0.8rem; }
+    .qs-step.qs-done { border-color: var(--done-border); opacity: 0.5; }
+    .qs-step.qs-done .qs-num { color: #3d8060; }
 
     /* ── LAYOUT ── */
     .container {
@@ -134,6 +237,11 @@
       border-color: var(--accent2);
       color: #080c14;
     }
+    .filter-btn[data-filter="done"].active {
+      background: #1a5a3a;
+      border-color: #2a8060;
+      color: #7dd4a0;
+    }
 
     /* ── SECTION ── */
     .section-label {
@@ -156,14 +264,17 @@
       display: flex;
       align-items: flex-start;
       gap: 1rem;
-      transition: border-color 0.18s, transform 0.18s;
+      transition: border-color 0.18s, transform 0.18s, background 0.3s, opacity 0.3s;
       animation: fadeUp 0.4s ease both;
     }
-    .card:hover {
-      border-color: var(--accent);
-      transform: translateY(-1px);
-    }
+    .card:hover { border-color: #3a5a9a; transform: translateY(-1px); }
     .card.hidden { display: none; }
+    .card.done {
+      background: var(--done-bg);
+      border-color: var(--done-border);
+      opacity: 0.65;
+    }
+    .card.done:hover { opacity: 0.85; border-color: #2a6a4a; }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
@@ -195,6 +306,8 @@
       transition: color 0.15s;
     }
     .card-title:hover { color: var(--accent2); }
+    .done .card-title { text-decoration: line-through; color: var(--muted); }
+
     .tag {
       font-size: 0.65rem;
       padding: 0.15rem 0.5rem;
@@ -204,20 +317,29 @@
       letter-spacing: 0.06em;
       white-space: nowrap;
     }
-    .tag.bigfive  { border-color: #3a6fd8; color: #7fb0ff; }
-    .tag.mbti     { border-color: #5a3ab0; color: #b99aff; }
-    .tag.enneagram{ border-color: #3a8060; color: #7dd4a0; }
-    .tag.disc     { border-color: #7a6020; color: #ffd080; }
-    .tag.archetype{ border-color: #803a3a; color: #ff9a9a; }
-    .tag.core     { background: #1a2440; color: var(--accent); border-color: var(--accent); }
+    .tag.bigfive   { border-color: #3a6fd8; color: #7fb0ff; }
+    .tag.mbti      { border-color: #5a3ab0; color: #b99aff; }
+    .tag.enneagram { border-color: #3a8060; color: #7dd4a0; }
+    .tag.disc      { border-color: #7a6020; color: #ffd080; }
+    .tag.archetype { border-color: #803a3a; color: #ff9a9a; }
+    .tag.core      { background: #1a2440; color: var(--accent); border-color: var(--accent); }
+    .tag.done-tag  { background: #0a1a12; color: #3d8060; border-color: #1a4030; }
 
     .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CARD ACTIONS ROW ── */
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+      flex-wrap: wrap;
+    }
 
     .open-btn {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      margin-top: 0.6rem;
       background: transparent;
       border: 1px solid var(--border);
       border-radius: 0.4rem;
@@ -236,6 +358,81 @@
       color: #fff;
     }
     .open-btn svg { width: 11px; height: 11px; }
+
+    .done-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 0.4rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.04em;
+    }
+    .done-btn:hover {
+      border-color: #2a8060;
+      color: #7dd4a0;
+    }
+    .card.done .done-btn {
+      background: #0a1a12;
+      border-color: #2a6a4a;
+      color: #7dd4a0;
+    }
+    .done-btn .check { font-size: 0.85rem; }
+
+    .notes-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 0.4rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.04em;
+    }
+    .notes-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+    .notes-btn.has-notes { border-color: #3a5a4a; color: var(--accent2); }
+
+    /* ── NOTES AREA ── */
+    .notes-area {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .notes-area.open { display: block; }
+    .notes-input {
+      width: 100%;
+      background: #060a12;
+      border: 1px solid var(--border);
+      border-radius: 0.4rem;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      resize: vertical;
+      min-height: 72px;
+      line-height: 1.6;
+      transition: border-color 0.15s;
+    }
+    .notes-input:focus { outline: none; border-color: var(--accent2); }
+    .notes-input::placeholder { color: #3a4468; }
+    .notes-saved {
+      font-size: 0.65rem;
+      color: #3d8060;
+      margin-top: 0.3rem;
+      display: none;
+      letter-spacing: 0.05em;
+    }
+    .notes-saved.show { display: block; }
 
     /* ── ORDER SECTION ── */
     .order-section {
@@ -259,11 +456,7 @@
       line-height: 1.6;
     }
     .steps { display: flex; flex-direction: column; gap: 0.75rem; }
-    .step {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-    }
+    .step { display: flex; gap: 1rem; align-items: flex-start; }
     .step-dot {
       width: 28px; height: 28px;
       border-radius: 50%;
@@ -291,6 +484,44 @@
     }
     .rec-box strong { color: #fff; }
 
+    /* ── RESET + EXPORT ── */
+    .reset-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .export-btn {
+      background: linear-gradient(135deg, #1a2e50, #0f1e38);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: all 0.18s;
+    }
+    .export-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .reset-btn {
+      background: transparent;
+      border: 1px solid #2a1a1a;
+      color: #5a3030;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: all 0.15s;
+    }
+    .reset-btn:hover { border-color: #8a3030; color: #ff6060; }
+
     /* ── FOOTER ── */
     .footer {
       text-align: center;
@@ -301,10 +532,11 @@
     }
 
     /* ── MOBILE ── */
-    @media (max-width: 480px) {
+    @media (max-width: 520px) {
       .hero { padding: 3rem 1.25rem 2.5rem; }
       .card-num { display: none; }
       .card { gap: 0.75rem; padding: 0.9rem 1rem; }
+      .qs-steps { gap: 0.4rem; }
     }
   </style>
 </head>
@@ -314,6 +546,16 @@
   <div class="hero-label">Self-knowledge toolkit</div>
   <h1>Free Personality &amp;<br><em>Psychology Tests</em></h1>
   <p>A curated set of free tests — traits, type, motivations, and symbolic identity. Open any test directly in a new tab.</p>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      Progress <span id="progressText">0 / 11 done</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
   <div class="stack-badge">
     <span>Best stack →</span>
     Big Five · 16Personalities · Enneagram · Archetype
@@ -321,6 +563,41 @@
 </div>
 
 <div class="container">
+
+  <!-- QUICK START -->
+  <div class="quickstart">
+    <div class="quickstart-header">
+      <h3>Just do these 3</h3>
+      <span class="qs-badge">Minimal path</span>
+    </div>
+    <p>Overwhelmed? Start here. These 3 cover the most ground with the least time.</p>
+    <div class="qs-steps">
+      <a class="qs-step" id="qs1" href="https://openpsychometrics.org/tests/IPIP-BFFM/" target="_blank" rel="noopener">
+        <div class="qs-num">1</div>
+        <div class="qs-info">
+          <strong>OpenPsychometrics Big Five</strong>
+          <small>~15 min · trait foundation · most scientific</small>
+        </div>
+        <div class="qs-arrow">↗</div>
+      </a>
+      <a class="qs-step" id="qs2" href="https://www.16personalities.com/free-personality-test" target="_blank" rel="noopener">
+        <div class="qs-num">2</div>
+        <div class="qs-info">
+          <strong>16Personalities</strong>
+          <small>~12 min · type pattern · most recognisable</small>
+        </div>
+        <div class="qs-arrow">↗</div>
+      </a>
+      <a class="qs-step" id="qs3" href="https://www.truity.com/test/enneagram-personality-test" target="_blank" rel="noopener">
+        <div class="qs-num">3</div>
+        <div class="qs-info">
+          <strong>Truity Enneagram</strong>
+          <small>~10 min · motivations &amp; fears · what MBTI misses</small>
+        </div>
+        <div class="qs-arrow">↗</div>
+      </a>
+    </div>
+  </div>
 
   <!-- FILTER BAR -->
   <div class="filter-bar">
@@ -331,13 +608,20 @@
     <button class="filter-btn" data-filter="disc">DISC</button>
     <button class="filter-btn" data-filter="archetype">Archetype</button>
     <button class="filter-btn" data-filter="core">★ Core only</button>
+    <button class="filter-btn" data-filter="done">✓ Done</button>
   </div>
 
-  <!-- CARDS -->
+  <!-- RESET + EXPORT -->
+  <div class="reset-bar">
+    <button class="export-btn" id="exportReport">↓ Export Report</button>
+    <button class="reset-btn" id="resetAll">Reset all progress</button>
+  </div>
+
+  <!-- SECTION LABEL -->
   <div class="section-label">Tests</div>
   <div class="cards" id="cardList">
 
-    <div class="card" data-cat="bigfive core">
+    <div class="card" data-cat="bigfive core" data-id="01">
       <div class="card-num">01</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -346,14 +630,22 @@
           <span class="tag core">★ Core</span>
         </div>
         <div class="card-desc">Strong free Big Five trait breakdown with detailed facet scores. The most scientifically grounded starting point.</div>
-        <a class="open-btn" href="https://openpsychometrics.org/tests/IPIP-BFFM/" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://openpsychometrics.org/tests/IPIP-BFFM/" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="01"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="01">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="01">
+          <textarea class="notes-input" data-id="01" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="01">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="bigfive core">
+    <div class="card" data-cat="bigfive core" data-id="02">
       <div class="card-num">02</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -362,14 +654,22 @@
           <span class="tag core">★ Core</span>
         </div>
         <div class="card-desc">Clean Big Five report. Good for a second pass to compare against the OpenPsychometrics result.</div>
-        <a class="open-btn" href="https://bigfive-test.com/en" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://bigfive-test.com/en" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="02"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="02">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="02">
+          <textarea class="notes-input" data-id="02" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="02">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="mbti core">
+    <div class="card" data-cat="mbti core" data-id="03">
       <div class="card-num">03</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -378,14 +678,22 @@
           <span class="tag core">★ Core</span>
         </div>
         <div class="card-desc">The most widely-used free MBTI-style test. Readable result report, useful for self-recognition and comparison.</div>
-        <a class="open-btn" href="https://www.16personalities.com/free-personality-test" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://www.16personalities.com/free-personality-test" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="03"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="03">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="03">
+          <textarea class="notes-input" data-id="03" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="03">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="enneagram core">
+    <div class="card" data-cat="enneagram core" data-id="04">
       <div class="card-num">04</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -394,14 +702,22 @@
           <span class="tag core">★ Core</span>
         </div>
         <div class="card-desc">Good free Enneagram overview with ranked types. Surfaces motivation and fear patterns that Big Five and MBTI miss.</div>
-        <a class="open-btn" href="https://www.truity.com/test/enneagram-personality-test" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://www.truity.com/test/enneagram-personality-test" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="04"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="04">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="04">
+          <textarea class="notes-input" data-id="04" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="04">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="mbti">
+    <div class="card" data-cat="mbti" data-id="05">
       <div class="card-num">05</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -409,14 +725,22 @@
           <span class="tag mbti">MBTI-style</span>
         </div>
         <div class="card-desc">Alternative 16-type test. Worth doing if you want a second opinion on your MBTI-style result.</div>
-        <a class="open-btn" href="https://www.truity.com/test/type-finder-personality-test-new" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://www.truity.com/test/type-finder-personality-test-new" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="05"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="05">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="05">
+          <textarea class="notes-input" data-id="05" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="05">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="bigfive">
+    <div class="card" data-cat="bigfive" data-id="06">
       <div class="card-num">06</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -424,14 +748,22 @@
           <span class="tag bigfive">Big Five</span>
         </div>
         <div class="card-desc">Quick free trait profile. Good if you want a faster Big Five snapshot without the full item count.</div>
-        <a class="open-btn" href="https://www.123test.com/personality-test/" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://www.123test.com/personality-test/" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="06"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="06">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="06">
+          <textarea class="notes-input" data-id="06" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="06">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="bigfive">
+    <div class="card" data-cat="bigfive" data-id="07">
       <div class="card-num">07</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -439,14 +771,22 @@
           <span class="tag bigfive">Big Five</span>
         </div>
         <div class="card-desc">Simple, minimal Big Five snapshot. No frills, fast result.</div>
-        <a class="open-btn" href="https://www.outofservice.com/bigfive/" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://www.outofservice.com/bigfive/" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="07"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="07">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="07">
+          <textarea class="notes-input" data-id="07" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="07">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="mbti">
+    <div class="card" data-cat="mbti" data-id="08">
       <div class="card-num">08</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -454,14 +794,22 @@
           <span class="tag mbti">MBTI-style</span>
         </div>
         <div class="card-desc">Jung/MBTI-style type test from the same open research platform as the Big Five above.</div>
-        <a class="open-btn" href="https://openpsychometrics.org/tests/OJTS/" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://openpsychometrics.org/tests/OJTS/" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="08"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="08">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="08">
+          <textarea class="notes-input" data-id="08" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="08">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="disc">
+    <div class="card" data-cat="disc" data-id="09">
       <div class="card-num">09</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -469,14 +817,22 @@
           <span class="tag disc">DISC</span>
         </div>
         <div class="card-desc">Maps work-style and communication tendencies. More useful in a professional or relationship context than the others.</div>
-        <a class="open-btn" href="https://www.123test.com/disc-personality-test/" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://www.123test.com/disc-personality-test/" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="09"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="09">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="09">
+          <textarea class="notes-input" data-id="09" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="09">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="archetype">
+    <div class="card" data-cat="archetype" data-id="10">
       <div class="card-num">10</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -484,14 +840,22 @@
           <span class="tag archetype">Archetype</span>
         </div>
         <div class="card-desc">Straightforward Jungian archetype result. Good first archetype test — clear and quick.</div>
-        <a class="open-btn" href="https://www.psychologistworld.com/tests/jung-archetype-quiz" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://www.psychologistworld.com/tests/jung-archetype-quiz" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="10"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="10">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="10">
+          <textarea class="notes-input" data-id="10" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="10">Saved ✓</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" data-cat="archetype">
+    <div class="card" data-cat="archetype" data-id="11">
       <div class="card-num">11</div>
       <div class="card-body">
         <div class="card-title-row">
@@ -499,10 +863,18 @@
           <span class="tag archetype">Archetype</span>
         </div>
         <div class="card-desc">More reflective and introspective archetype feedback. Good second opinion on the symbolic identity layer.</div>
-        <a class="open-btn" href="https://lonerwolf.com/psychological-archetype-test/" target="_blank" rel="noopener">
-          Open test
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-        </a>
+        <div class="card-actions">
+          <a class="open-btn" href="https://lonerwolf.com/psychological-archetype-test/" target="_blank" rel="noopener">
+            Open test
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
+          </a>
+          <button class="done-btn" data-id="11"><span class="check">○</span> Mark done</button>
+          <button class="notes-btn" data-id="11">✎ Notes</button>
+        </div>
+        <div class="notes-area" data-id="11">
+          <textarea class="notes-input" data-id="11" placeholder="Paste your result, type, score — anything you want to remember..."></textarea>
+          <div class="notes-saved" data-id="11">Saved ✓</div>
+        </div>
       </div>
     </div>
 
@@ -547,54 +919,569 @@
     </div>
   </div>
 
-  <div class="footer">All tests are free and open in a new tab. No data is collected by this page.</div>
+  <div class="footer">All tests are free and open in a new tab. Progress and notes are saved locally in your browser.</div>
 
 </div><!-- /container -->
 
 <script>
-  (function () {
-    const allBtn = document.querySelector('[data-all]');
-    const filterBtns = document.querySelectorAll('[data-filter]');
-    const cards = document.querySelectorAll('.card');
-    let active = null;
+(function () {
+  const TOTAL = 11;
+  const STORAGE_KEY = 'psykit_v1';
 
-    function applyFilter(filter) {
-      cards.forEach(card => {
-        const cats = (card.dataset.cat || '').split(' ');
-        if (!filter) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.toggle('hidden', !cats.includes(filter));
+  // Load state
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch { return {}; }
+  }
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  let state = loadState();
+
+  // ── PROGRESS ──
+  function updateProgress() {
+    const done = Object.values(state).filter(v => v.done).length;
+    const pct = Math.round((done / TOTAL) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = done + ' / ' + TOTAL + ' done';
+  }
+
+  // ── APPLY STATE TO CARDS ──
+  function applyState() {
+    document.querySelectorAll('.card').forEach(card => {
+      const id = card.dataset.id;
+      const s = state[id] || {};
+
+      // done styling
+      if (s.done) {
+        card.classList.add('done');
+        const btn = card.querySelector('.done-btn');
+        if (btn) { btn.querySelector('.check').textContent = '✓'; btn.innerHTML = '<span class="check">✓</span> Done'; }
+        // add done tag if not present
+        if (!card.querySelector('.tag.done-tag')) {
+          const tag = document.createElement('span');
+          tag.className = 'tag done-tag';
+          tag.textContent = '✓ done';
+          card.querySelector('.card-title-row').appendChild(tag);
         }
-      });
+      } else {
+        card.classList.remove('done');
+        const btn = card.querySelector('.done-btn');
+        if (btn) { btn.innerHTML = '<span class="check">○</span> Mark done'; }
+        const doneTag = card.querySelector('.tag.done-tag');
+        if (doneTag) doneTag.remove();
+      }
+
+      // notes
+      const textarea = card.querySelector('.notes-input');
+      if (textarea && s.notes) textarea.value = s.notes;
+      const notesBtn = card.querySelector('.notes-btn');
+      if (notesBtn) notesBtn.classList.toggle('has-notes', !!(s.notes && s.notes.trim()));
+    });
+
+    // quickstart done state
+    ['qs1','qs2','qs3'].forEach((qsId, i) => {
+      const el = document.getElementById(qsId);
+      if (!el) return;
+      const cardId = ['01','03','04'][i];
+      const s = state[cardId] || {};
+      el.classList.toggle('qs-done', !!s.done);
+    });
+
+    updateProgress();
+  }
+
+  // ── DONE BUTTONS ──
+  document.querySelectorAll('.done-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      if (!state[id]) state[id] = {};
+      state[id].done = !state[id].done;
+      saveState(state);
+      applyState();
+    });
+  });
+
+  // ── NOTES BUTTONS ──
+  document.querySelectorAll('.notes-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const area = document.querySelector(`.notes-area[data-id="${id}"]`);
+      if (area) {
+        area.classList.toggle('open');
+        if (area.classList.contains('open')) {
+          area.querySelector('textarea').focus();
+        }
+      }
+    });
+  });
+
+  // ── NOTES SAVE ──
+  let saveTimers = {};
+  document.querySelectorAll('.notes-input').forEach(ta => {
+    ta.addEventListener('input', () => {
+      const id = ta.dataset.id;
+      if (!state[id]) state[id] = {};
+      state[id].notes = ta.value;
+      clearTimeout(saveTimers[id]);
+      saveTimers[id] = setTimeout(() => {
+        saveState(state);
+        const saved = document.querySelector(`.notes-saved[data-id="${id}"]`);
+        if (saved) {
+          saved.classList.add('show');
+          setTimeout(() => saved.classList.remove('show'), 1500);
+        }
+        // update has-notes
+        const btn = document.querySelector(`.notes-btn[data-id="${id}"]`);
+        if (btn) btn.classList.toggle('has-notes', !!(ta.value && ta.value.trim()));
+      }, 600);
+    });
+  });
+
+  // ── FILTER ──
+  const allBtn = document.querySelector('[data-all]');
+  const filterBtns = document.querySelectorAll('[data-filter]');
+  const cards = document.querySelectorAll('.card');
+  let active = null;
+
+  function applyFilter(filter) {
+    cards.forEach(card => {
+      const cats = (card.dataset.cat || '').split(' ');
+      const isDone = card.classList.contains('done');
+      if (!filter) {
+        card.classList.remove('hidden');
+      } else if (filter === 'done') {
+        card.classList.toggle('hidden', !isDone);
+      } else {
+        card.classList.toggle('hidden', !cats.includes(filter));
+      }
+    });
+  }
+
+  allBtn.addEventListener('click', () => {
+    active = null;
+    allBtn.classList.add('active');
+    filterBtns.forEach(b => b.classList.remove('active'));
+    applyFilter(null);
+  });
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      if (active === f) {
+        active = null;
+        btn.classList.remove('active');
+        allBtn.classList.add('active');
+        applyFilter(null);
+      } else {
+        active = f;
+        filterBtns.forEach(b => b.classList.remove('active'));
+        allBtn.classList.remove('active');
+        btn.classList.add('active');
+        applyFilter(f);
+      }
+    });
+  });
+
+  // ── RESET ──
+  document.getElementById('resetAll').addEventListener('click', () => {
+    if (!confirm('Reset all progress and notes? This cannot be undone.')) return;
+    state = {};
+    saveState(state);
+    // clear textareas
+    document.querySelectorAll('.notes-input').forEach(ta => ta.value = '');
+    document.querySelectorAll('.notes-area').forEach(a => a.classList.remove('open'));
+    applyState();
+  });
+
+  // ── EXPORT REPORT ──
+  const TEST_META = {
+    '01': { title: 'OpenPsychometrics Big Five',         cat: 'Big Five',    url: 'https://openpsychometrics.org/tests/IPIP-BFFM/' },
+    '02': { title: 'BigFive-Test.com',                   cat: 'Big Five',    url: 'https://bigfive-test.com/en' },
+    '03': { title: '16Personalities',                    cat: 'MBTI-style',  url: 'https://www.16personalities.com/free-personality-test' },
+    '04': { title: 'Truity Enneagram',                   cat: 'Enneagram',   url: 'https://www.truity.com/test/enneagram-personality-test' },
+    '05': { title: 'Truity TypeFinder',                  cat: 'MBTI-style',  url: 'https://www.truity.com/test/type-finder-personality-test-new' },
+    '06': { title: '123test Big Five',                   cat: 'Big Five',    url: 'https://www.123test.com/personality-test/' },
+    '07': { title: 'Out of Service Big Five',            cat: 'Big Five',    url: 'https://www.outofservice.com/bigfive/' },
+    '08': { title: 'OpenPsychometrics Jung Type Test',   cat: 'MBTI-style',  url: 'https://openpsychometrics.org/tests/OJTS/' },
+    '09': { title: '123test DISC',                       cat: 'DISC',        url: 'https://www.123test.com/disc-personality-test/' },
+    '10': { title: 'Psychologist World Jungian Archetype', cat: 'Archetype', url: 'https://www.psychologistworld.com/tests/jung-archetype-quiz' },
+    '11': { title: 'LonerWolf Psychological Archetype',  cat: 'Archetype',   url: 'https://lonerwolf.com/psychological-archetype-test/' },
+  };
+
+  function generateReport() {
+    const done = Object.values(state).filter(v => v.done).length;
+    const pct = Math.round((done / TOTAL) * 100);
+    const dateStr = new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const completedEntries = Object.entries(TEST_META)
+      .filter(([id]) => state[id] && state[id].done)
+      .map(([id, meta]) => {
+        const notes = (state[id] && state[id].notes && state[id].notes.trim()) ? state[id].notes.trim() : null;
+        return `
+          <div class="entry">
+            <div class="entry-header">
+              <div class="entry-left">
+                <div class="entry-num">${id}</div>
+                <div>
+                  <div class="entry-title">${meta.title}</div>
+                  <div class="entry-cat">${meta.cat}</div>
+                </div>
+              </div>
+              <div class="entry-check">✓</div>
+            </div>
+            ${notes ? `<div class="entry-notes">${notes.replace(/\n/g, '<br>')}</div>` : '<div class="entry-no-notes">No notes recorded.</div>'}
+          </div>`;
+      }).join('');
+
+    const pendingEntries = Object.entries(TEST_META)
+      .filter(([id]) => !state[id] || !state[id].done)
+      .map(([id, meta]) => `
+        <div class="pending-item">
+          <span class="pending-num">${id}</span>
+          <span class="pending-title">${meta.title}</span>
+          <span class="pending-cat">${meta.cat}</span>
+        </div>`).join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personality Profile Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080c14; --surface: #0e1420; --border: #1c2440;
+      --accent: #4f8ef7; --accent2: #7dd4c0;
+      --text: #e8eaf6; --muted: #7a84a8;
+    }
+    @media print {
+      body { background: #080c14 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+    }
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
     }
 
-    allBtn.addEventListener('click', () => {
-      active = null;
-      allBtn.classList.add('active');
-      filterBtns.forEach(b => b.classList.remove('active'));
-      applyFilter(null);
-    });
+    /* COVER */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(160deg, #0d1527 0%, #080c14 60%, #060a10 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79,142,247,0.06) 0%, transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+    .cover-rule {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 0 auto 2rem;
+    }
+    .cover-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .cover h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+    .cover h1 em { font-style: italic; color: var(--accent2); }
+    .cover-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 3rem;
+      letter-spacing: 0.04em;
+    }
+    .cover-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-val {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-val.accent { color: var(--accent2); }
+    .stat-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+    .cover-bar-wrap { width: 240px; margin: 0 auto 3rem; }
+    .cover-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.65rem; color: var(--muted); margin-bottom: 0.5rem;
+    }
+    .cover-bar-track {
+      height: 6px; background: #1c2440; border-radius: 999px; overflow: hidden;
+    }
+    .cover-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      width: ${pct}%;
+    }
+    .cover-date {
+      font-size: 0.7rem; color: #3a4468; letter-spacing: 0.1em;
+    }
 
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const f = btn.dataset.filter;
-        if (active === f) {
-          // toggle off
-          active = null;
-          btn.classList.remove('active');
-          allBtn.classList.add('active');
-          applyFilter(null);
-        } else {
-          active = f;
-          filterBtns.forEach(b => b.classList.remove('active'));
-          allBtn.classList.remove('active');
-          btn.classList.add('active');
-          applyFilter(f);
-        }
-      });
-    });
-  })();
+    /* BODY */
+    .report-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-head h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: #fff;
+    }
+    .section-count {
+      font-size: 0.68rem;
+      color: var(--muted);
+      background: #131b30;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+    }
+
+    /* ENTRIES */
+    .entries { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3rem; }
+    .entry {
+      background: #0e1420;
+      border: 1px solid #1c2440;
+      border-radius: 0.65rem;
+      overflow: hidden;
+    }
+    .entry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 1.1rem;
+      border-bottom: 1px solid #141e34;
+    }
+    .entry-left { display: flex; align-items: center; gap: 0.9rem; }
+    .entry-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: #2a3860;
+      min-width: 1.4rem;
+    }
+    .entry-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 0.15rem;
+    }
+    .entry-cat {
+      font-size: 0.65rem;
+      color: var(--accent2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .entry-check {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #0a1a12;
+      border: 1px solid #1a4030;
+      display: flex; align-items: center; justify-content: center;
+      color: #3d8060;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .entry-notes {
+      padding: 0.85rem 1.1rem;
+      font-size: 0.78rem;
+      color: #b0b8d8;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      border-left: 2px solid #2a3a60;
+      margin: 0.5rem 1.1rem 0.85rem;
+      border-radius: 0 0.3rem 0.3rem 0;
+      background: #08101e;
+      padding: 0.75rem 0.9rem;
+    }
+    .entry-no-notes {
+      padding: 0.6rem 1.1rem 0.85rem;
+      font-size: 0.72rem;
+      color: #2a3460;
+      font-style: italic;
+    }
+
+    /* PENDING */
+    .pending-list { display: flex; flex-direction: column; gap: 0.4rem; }
+    .pending-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0.9rem;
+      background: #0a0e18;
+      border: 1px dashed #181e30;
+      border-radius: 0.4rem;
+      opacity: 0.55;
+    }
+    .pending-num { font-family: 'DM Serif Display', serif; font-size: 0.9rem; color: #2a3460; min-width: 1.4rem; }
+    .pending-title { font-size: 0.78rem; color: var(--muted); flex: 1; }
+    .pending-cat { font-size: 0.62rem; color: #3a4468; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    /* FOOTER */
+    .report-footer {
+      text-align: center;
+      font-size: 0.68rem;
+      color: #2a3468;
+      padding: 1.5rem 0;
+      border-top: 1px solid #121830;
+      letter-spacing: 0.06em;
+    }
+
+    /* PRINT BUTTON */
+    .print-bar {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      display: flex; gap: 0.5rem;
+      z-index: 100;
+    }
+    .print-bar button {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 20px rgba(79,142,247,0.3);
+      transition: all 0.15s;
+    }
+    .print-bar button:hover { background: #6fa0ff; }
+    .print-bar button.close-btn {
+      background: #1a2440;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      box-shadow: none;
+    }
+    .print-bar button.close-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    @media (max-width: 520px) {
+      .cover-stats { gap: 1.5rem; }
+      .cover h1 { font-size: 2rem; }
+      .report-body { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div class="cover-rule"></div>
+    <div class="cover-label">Self-knowledge toolkit · Personality Profile</div>
+    <h1>My Psychology<br><em>Test Report</em></h1>
+    <div class="cover-sub">A record of completed assessments and personal notes</div>
+
+    <div class="cover-stats">
+      <div class="stat">
+        <div class="stat-val accent">${done}</div>
+        <div class="stat-label">Tests completed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">${TOTAL - done}</div>
+        <div class="stat-label">Remaining</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val accent">${pct}%</div>
+        <div class="stat-label">Progress</div>
+      </div>
+    </div>
+
+    <div class="cover-bar-wrap">
+      <div class="cover-bar-label"><span>Progress</span><span>${pct}%</span></div>
+      <div class="cover-bar-track"><div class="cover-bar-fill"></div></div>
+    </div>
+
+    <div class="cover-date">Generated ${dateStr}</div>
+  </div>
+
+  <!-- REPORT BODY -->
+  <div class="report-body">
+
+    <div class="section-head">
+      <h2>Completed Tests</h2>
+      <span class="section-count">${done} of ${TOTAL}</span>
+    </div>
+
+    ${done > 0 ? `<div class="entries">${completedEntries}</div>` : '<p style="color:#3a4468;font-size:0.8rem;margin-bottom:3rem;">No tests completed yet.</p>'}
+
+    ${TOTAL - done > 0 ? `
+    <div class="section-head">
+      <h2>Still to Complete</h2>
+      <span class="section-count">${TOTAL - done} remaining</span>
+    </div>
+    <div class="pending-list">${pendingEntries}</div>
+    ` : ''}
+
+    <div class="report-footer">Personality Test Kit · psykit · Generated ${dateStr}</div>
+  </div>
+
+  <!-- PRINT BAR -->
+  <div class="print-bar no-print">
+    <button class="close-btn" onclick="window.close()">✕ Close</button>
+    <button onclick="window.print()">↓ Save as PDF</button>
+  </div>
+
+</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }
+
+  document.getElementById('exportReport').addEventListener('click', generateReport);
+
+  // ── INIT ──
+  applyState();
+
+})();
 </script>
 
 </body>
